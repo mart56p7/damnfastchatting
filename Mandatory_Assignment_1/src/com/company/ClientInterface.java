@@ -2,7 +2,7 @@
 JOIN <<user_name>>, <<server_ip>>:<<server_port>>
 From client to server.
 The user name is given by the user. Username is max 12 chars long, only
-letters, digits, ‘-‘ and ‘_’ allowed.
+letters, digits, ï¿½-ï¿½ and ï¿½_ï¿½ allowed.
 
 J_OK
 From server to client.
@@ -36,7 +36,7 @@ From server to client.
 A list of all active user names is sent to all clients, each time the
 list at the server changes
 */
-   
+   package com.company;
    
    public interface ClientInterface{
    void JOIN(String username, String server_ip, int pot) throws ClientException;

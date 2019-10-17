@@ -7,48 +7,47 @@ import java.util.List;
 
 public class Server
 {
-    private Socket socket = null;
-    private ServerSocket server = null;
-    private DataInputStream in = null;
-    private List<Socket> sockets = new ArrayList<>();
+    private volatile ServerSocket server = null;
+    private List<Socket> sockets = null;
+    private boolean shutdown = false;
 
-    public Server(int port)
+    public Server(int port, List<Socket> sockets)
     {
-        try
-        {
+        this.sockets = sockets;
+        ServerSocket server = null;
+        try {
             server = new ServerSocket(port);
-            System.out.println("Server started");
-            System.out.println("Waiting for a client ...");
-            socket = server.accept();
-            sockets.add(socket);
-            System.out.println("Client accepted");
-
-            in = new DataInputStream(
-                    new BufferedInputStream(socket.getInputStream()));
-            String line = "";
-            while (!line.equals("Over"))
-            {
+            while(!shutdown){
                 try
                 {
-                    line = in.readUTF();
-                    System.out.println(line);
+
+                    System.out.println("Server started");
+                    System.out.println("Waiting for a client ...");
+                    synchronized (sockets) {
+                        sockets.add(server.accept());
+                    }
+                    System.out.println("Client accepted");
+
                 }
                 catch(IOException i)
                 {
                     System.out.println(i);
                 }
             }
-            System.out.println("Closing connection");
-            socket.close();
-            in.close();
-        }
-        catch(IOException i)
-        {
-            System.out.println(i);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
+
+    public void shutdown(){
+        this.shutdown = true;
+    }
+
     public static void main(String args[])
     {
-        Server server = new Server(5000);
+        FIFO<Message> msgqueue = new FIFO<>();
+        List<Socket> soc = new ArrayList<Socket>();
+        Server server = new Server(5000, soc);
+        Listener listener = new Listener(soc, msgqueue);
     }
 }

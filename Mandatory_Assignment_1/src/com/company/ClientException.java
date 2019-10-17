@@ -1,2 +1,3 @@
-public ClientException extends Exception{
+package com.company;
+public class ClientException extends Exception{
 }
