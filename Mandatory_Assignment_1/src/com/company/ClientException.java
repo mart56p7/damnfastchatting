@@ -1,0 +1,2 @@
+public ClientException extends Exception{
+}
