@@ -23,7 +23,7 @@ public class Server
                 try
                 {
 
-                    System.out.println("Server started");
+                    System.out.println("Server started " + server.getInetAddress() + " on port " + server.getLocalPort());
                     System.out.println("Waiting for a client ...");
                     synchronized (sockets) {
                         sockets.add(server.accept());

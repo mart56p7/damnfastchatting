@@ -1,5 +1,7 @@
 package com.msgclient;
 
+import com.msgresources.MessageProtocolException;
+
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
@@ -18,17 +20,17 @@ import java.util.List;
  * */
 public class ClientGUIMKN implements ClientGUIInterface {
     private boolean shutdown = false;
-    private ClientMKN clientmkn;
+    private ClientInterface clientmkn;
 
     private JFrame frame = null;
     private JPanel panel = null;
     private UserTable ut = null;
     private JTextField input = null;
-    JTextPane chatbox = null;
-    StyledDocument chattext = null;
-    SimpleAttributeSet self_user_style = null;
-    SimpleAttributeSet others_user_style = null;
-    SimpleAttributeSet error_style = null;
+    private JTextPane chatbox = null;
+    private volatile StyledDocument chattext = null;
+    private SimpleAttributeSet self_user_style = null;
+    private SimpleAttributeSet others_user_style = null;
+    private SimpleAttributeSet error_style = null;
     public ClientGUIMKN(){
         frame = new JFrame("Damn Fast Messaging");
         frame.setResizable(false);
@@ -41,12 +43,16 @@ public class ClientGUIMKN implements ClientGUIInterface {
                     public void windowClosed(WindowEvent e)
                     {
                         System.out.println("windowClosed");
+                        shutdown();
+                        clientmkn.shutdown();
                         Runtime.getRuntime().exit(0);
                     }
 
                     public void windowClosing(WindowEvent e)
                     {
                         System.out.println("windowClosing");
+                        shutdown();
+                        clientmkn.shutdown();
                         Runtime.getRuntime().exit(0);
                     }
                 });
@@ -88,12 +94,21 @@ u[1] = new User("Yola");
                         if(e.getKeyCode() == 10){
                             System.out.println("enter");
 
-                            String cmd = input.getText();
+                            String cmd = getInput();
 
                             //Lets call our client with data
-                            receivedMessage("user", cmd);
+                            try {
+                                clientmkn.send(cmd);
+                            } catch (MessageProtocolException ex) {
+                                error(ex.getMessage());
+                            }
+                            // We need to catch is client is to shutdown, we do this in the GUI and not in the network component. The GUI then closes the network component, since it owns it.
+                            if(getInput().trim().toLowerCase().equals("quit")){
+                                System.out.println("Stop program");
+                                Runtime.getRuntime().exit(0);
 
-                            input.setText("");
+                            }
+                            clearInput();
                         }
                         else{
                             if(input.getText().length() > 255){
@@ -134,6 +149,7 @@ u[1] = new User("Yola");
 
     public void shutdown(){
         this.shutdown = true;
+        clientmkn.shutdown();
     }
 
     private String welcome(){
@@ -162,9 +178,11 @@ u[1] = new User("Yola");
             else{
                 style = others_user_style;
             }
-
-            this.chattext.insertString(chattext.getLength(), user, style);
-            this.chattext.insertString(chattext.getLength(), ": " + msg + "\n", null);
+            //Both gui and network thread can reach this point at the same time, so we need to protect the resource
+            synchronized (chattext) {
+                this.chattext.insertString(chattext.getLength(), user, style);
+                this.chattext.insertString(chattext.getLength(), ": " + msg + "\n", null);
+            }
         } catch (BadLocationException e) {
             e.printStackTrace();
         }
@@ -173,19 +191,32 @@ u[1] = new User("Yola");
     @Override
     public void error(String errmsg) {
         try {
-            this.chattext.insertString(chattext.getLength(), errmsg + "\n", error_style);
+            //Both gui and network thread can reach this point at the same time, so we need to protect the resource
+            synchronized (chattext) {
+                this.chattext.insertString(chattext.getLength(), errmsg + "\n", error_style);
+            }
         } catch (BadLocationException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void updateUserList(List<String> users) {
-
+    public void updateUserList(UserInterface[] users) {
+        ut.setList(users, null);
     }
 
     @Override
     public void userSelected(UserInterface user) {
-        this.input.setText(this.input.getText() + user.getDisplayName());
+        synchronized (input) {
+            this.input.setText(this.input.getText() + user.getDisplayName());
+        }
+    }
+
+    private String getInput(){
+        return input.getText();
+    }
+
+    private void clearInput(){
+        input.setText("");
     }
 }
