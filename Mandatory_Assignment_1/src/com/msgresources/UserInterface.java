@@ -1,4 +1,4 @@
-package com.msgclient;
+package com.msgresources;
 
 /**
  * Classes that are passed to EOGUIMultiSelect must implement this class to be painted

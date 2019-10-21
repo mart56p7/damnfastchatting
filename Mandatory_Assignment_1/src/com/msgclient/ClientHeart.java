@@ -20,7 +20,9 @@ public class ClientHeart implements Runnable {
         try {
             if(this.socket != null) {
                 do{
-                    wait(1000 * 60);
+                    synchronized (this) {
+                        wait(1000 * 60);
+                    }
                     try {
                         synchronized (socket){
                             //socket send heartbeat

@@ -1,6 +1,6 @@
 package com.msgclient;
 
-import java.util.List;
+import com.msgresources.UserInterface;
 
 public interface ClientGUIInterface {
     void receivedMessage(String user, String msg, boolean self);

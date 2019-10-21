@@ -1,8 +1,9 @@
 package com.msgclient;
 
+import com.msgresources.UserInterface;
+
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import javax.swing.border.Border;
 import java.awt.event.*;
 /**

@@ -1,4 +1,4 @@
-package com.msgclient;
+package com.msgresources;
 
 public class User implements UserInterface {
 

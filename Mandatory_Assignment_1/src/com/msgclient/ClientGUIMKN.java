@@ -1,6 +1,8 @@
 package com.msgclient;
 
 import com.msgresources.MessageProtocolException;
+import com.msgresources.User;
+import com.msgresources.UserInterface;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -12,7 +14,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.List;
 
 
 /**

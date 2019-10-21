@@ -1,6 +1,7 @@
 package com.msgserver;
 
 import com.msgresources.FIFO;
+import com.msgresources.Message;
 
 import java.net.*;
 import java.io.*;
@@ -10,23 +11,23 @@ import java.util.List;
 public class Server
 {
     private volatile ServerSocket server = null;
-    private List<Socket> sockets = null;
+    private List<Client> clients = null;
     private boolean shutdown = false;
 
-    public Server(int port, List<Socket> sockets)
+    public Server(List<Client> clients, int port)
     {
-        this.sockets = sockets;
+        this.clients = clients;
         ServerSocket server = null;
         try {
             server = new ServerSocket(port);
+            System.out.println("Server started " + server.getInetAddress() + " on port " + server.getLocalPort());
+            System.out.println("Waiting for a client ...");
             while(!shutdown){
                 try
                 {
-
-                    System.out.println("Server started " + server.getInetAddress() + " on port " + server.getLocalPort());
-                    System.out.println("Waiting for a client ...");
-                    synchronized (sockets) {
-                        sockets.add(server.accept());
+                    Socket socket = server.accept();
+                    synchronized (clients) {
+                        clients.add(new Client(socket));
                     }
                     System.out.println("Client accepted");
 
@@ -48,8 +49,12 @@ public class Server
     public static void main(String args[])
     {
         FIFO<Message> msgqueue = new FIFO<>();
-        List<Socket> soc = new ArrayList<Socket>();
-        Server server = new Server(5000, soc);
-        Listener listener = new Listener(soc, msgqueue);
+        List<Client> soc = new ArrayList<>();
+        Talker talker = new Talker(soc, msgqueue);
+        Listener listener = new Listener(soc, msgqueue, talker);
+        (new Thread(talker)).start();
+        (new Thread(listener)).start();
+
+        Server server = new Server(soc, 5000);
     }
 }
