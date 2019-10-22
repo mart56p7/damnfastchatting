@@ -24,6 +24,7 @@ public class Client {
             try {
                 dos = new DataOutputStream(socket.getOutputStream());
                 dis = new DataInputStream(socket.getInputStream());
+                lastcommunication = java.lang.System.currentTimeMillis();
             } catch (IOException e) {
                 this.socket = null;
                 System.out.println("Failed to connect client: " + e.getMessage());
@@ -52,5 +53,13 @@ public class Client {
 
     public DataOutputStream getDataOutputStream(){
         return this.dos;
+    }
+
+    public void updateTime(){
+        lastcommunication = java.lang.System.currentTimeMillis();
+    }
+
+    public long getTime(){
+        return this.lastcommunication;
     }
 }

@@ -14,6 +14,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.List;
 
 
 /**
@@ -202,8 +203,8 @@ u[1] = new User("Yola");
     }
 
     @Override
-    public void updateUserList(UserInterface[] users) {
-        ut.setList(users, null);
+    public void updateUserList(List<UserInterface> users) {
+        ut.setList(users);
     }
 
     @Override

@@ -127,6 +127,15 @@ public class UserTable extends JPanel
         setList(options, null);
     }
 
+    public void setList(java.util.List<UserInterface> options)
+    {
+        UserInterface[] uif = new UserInterface[options.size()];
+        for(int i = 0; i < options.size(); i++){
+            uif[i] = options.get(i);
+        }
+        setList(uif);
+    }
+
     /**
      * Get all options
      */

@@ -2,10 +2,12 @@ package com.msgclient;
 
 import com.msgresources.UserInterface;
 
+import java.util.List;
+
 public interface ClientGUIInterface {
     void receivedMessage(String user, String msg, boolean self);
     void error(String errmsg);
-    void updateUserList(UserInterface[] users);
+    void updateUserList(List<UserInterface> users);
     void userSelected(UserInterface user);
     void shutdown();
 }

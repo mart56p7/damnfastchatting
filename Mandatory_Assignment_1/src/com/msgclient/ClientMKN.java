@@ -2,11 +2,14 @@ package com.msgclient;
 
 import com.msgresources.MessageProtocolException;
 import com.msgresources.User;
+import com.msgresources.UserInterface;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -90,7 +93,12 @@ public class ClientMKN implements ClientInterface {
                        System.out.println("Received: " + input);
                        Matcher msg_matcher = msg_pattern.matcher(input);
                        Matcher error_matcher = error_pattern.matcher(input);
-                       Matcher list_matcher = list_pattern.matcher(input);
+                       Matcher list_matcher = null;
+                       if(input.startsWith("LIST ")){
+                           input = input.substring(5, input.length());
+                           list_matcher = list_pattern.matcher(input);
+                       }
+
                        if(msg_matcher.find()){
                            System.out.println("new Message arrived");
                             cgui.receivedMessage(msg_matcher.group(1), msg_matcher.group(2), msg_matcher.group(1).equals(username));
@@ -108,9 +116,13 @@ public class ClientMKN implements ClientInterface {
                        else if(error_matcher.find()){
                             cgui.error(error_matcher.group(1) + ":" + error_matcher.group(2));
                        }
-                       else if(input.startsWith("LIST")){
-                           //list_matcher.group(1)
-                           LIST(null);
+                       else if(list_matcher.find()){
+                           List<UserInterface> users = new ArrayList<>();
+                           users.add(new User(list_matcher.group(1)));
+                           while(list_matcher.find()){
+                               users.add(new User(list_matcher.group(1)));
+                           }
+                           LIST(users);
                        }
                        else{
                            cgui.error("500: Unknown command from server: " + input );
@@ -178,10 +190,7 @@ public class ClientMKN implements ClientInterface {
        }
    }
 
-    public void LIST(Matcher matcher) {
-        User[] users = new User[2];
-        users[0] = new User("John Mogensen");
-        users[1] = new User("Alibaba");
+    public void LIST(List<UserInterface> users) {
         cgui.updateUserList(users);
     }
 }

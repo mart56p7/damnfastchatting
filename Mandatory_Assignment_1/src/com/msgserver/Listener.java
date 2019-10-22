@@ -17,7 +17,7 @@ public class Listener implements Runnable {
 
     private volatile List<Client> clients;
     private volatile FIFO<Message> msgqueue;
-    private final int waittime = 5000;
+    private final int waittime = 100;
     private boolean running = true;
     private Talker talker;
 
@@ -34,7 +34,7 @@ public class Listener implements Runnable {
     @Override
     public void run() {
         while(running){
-            System.out.println("Running" + clients.size());
+            //System.out.println("Running" + clients.size());
             long start = System.currentTimeMillis();
             synchronized (clients){
                 for(Client client: clients){
@@ -61,9 +61,9 @@ public class Listener implements Runnable {
             }
             long end = System.currentTimeMillis();
             try {
-                System.out.println("Sleeping" + Math.min(waittime - (end - start), 0));
+                //System.out.println("Sleeping" + Math.min(waittime - (end - start), 0));
                 Thread.sleep(Math.max(waittime - (end - start), 0));
-                System.out.println("Im awake");
+                //System.out.println("Im awake");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -81,6 +81,10 @@ public class Listener implements Runnable {
         if(matcher_join.find()){
             System.out.println("New join");
             newJoin(matcher_join.group(1), client);
+        }
+        else if(msg.equals("IMAV")){
+            System.out.println("Revieved heart by " + client.getUser().getDisplayName());
+            client.updateTime();
         }
         else if(matcher_msg.find()){
             System.out.println("new msg");

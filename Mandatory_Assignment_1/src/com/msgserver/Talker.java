@@ -66,25 +66,35 @@ public class Talker implements Runnable, FIFOObserver {
     public void sendMessage(Client client, Message msg) {
         try {
             client.getDataOutputStream().writeUTF(Message.Format(msg));
+            synchronized (client){
+                client.updateTime();
+            }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Failed to send message '" + Message.Format(msg) + "' to " + client.getUser().getDisplayName());
         }
     }
 
     public void J_OK(Client client) throws MessageProtocolException{
         System.out.println("Sending ok");
-        try {
-            client.getDataOutputStream().writeUTF("J_OK");
-        } catch (IOException e) {
-            System.out.println("Failed to send OK to " + client.getUser().getDisplayName());
-        }
+        sendMessage(client, new Message("J_OK"));
+        //We always update the list after a join
+        LIST();
     }
 
     public void J_ER(Client client, int errmsg, String msg) throws MessageProtocolException{
-        try {
-            client.getDataOutputStream().writeUTF("J_ER " + errmsg + ":" + msg);
-        } catch (IOException e) {
-            e.printStackTrace();
+        sendMessage(client, new Message("J_ER " + errmsg + ":" + msg));
+    }
+
+    public void LIST(){
+        String str = "LIST";
+        synchronized (clients){
+            for(int i = 0; i < clients.size(); i++){
+                str += " " + clients.get(i).getUser().getDisplayName();
+            }
+            for(int i = 0; i < clients.size(); i++){
+                sendMessage(clients.get(i), new Message(str));
+            }
         }
+
     }
 }
