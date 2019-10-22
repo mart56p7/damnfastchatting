@@ -86,6 +86,12 @@ public class Listener implements Runnable {
             System.out.println("Revieved heart by " + client.getUser().getDisplayName());
             client.updateTime();
         }
+        else if(msg.equals("QUIT")){
+            //Remove client and update client list for all
+            clients.remove(client);
+            //Sends user list to all users.
+            talker.LIST();
+        }
         else if(matcher_msg.find()){
             System.out.println("new msg");
             //Username
