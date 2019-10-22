@@ -60,14 +60,11 @@ public class ClientGUIMKN implements ClientGUIInterface {
                 });
         panel = new JPanel();
         panel.setLayout(null);
-        panel.setBackground(Color.cyan);
+        //panel.setBackground(Color.cyan);
         panel.setBounds(0, 0, 1230, 600);
         //Lets add the UserTable
-//Few dummy users
-User[] u = new User[2];
-u[0] = new User("Yolo");
-u[1] = new User("Yola");
-        ut = new UserTable(u, new Dimension(300, 560), ListSelectionModel.SINGLE_SELECTION);
+
+        ut = new UserTable(null, new Dimension(300, 560), ListSelectionModel.SINGLE_SELECTION);
         ut.setBounds(885, 30, 300, 560);
         ut.setVisible(true);
         ut.addMouseListener(this);
@@ -76,9 +73,10 @@ u[1] = new User("Yola");
         //Adding chat textarea
         chatbox = new JTextPane();
         chatbox.setBounds(15, 30, 850, 530);
-        chatbox.setBackground(Color.YELLOW);
+        //chatbox.setBackground(Color.YELLOW);
         chatbox.setVisible(true);
         chattext = chatbox.getStyledDocument();
+        chatbox.setEditable(false);
         panel.add(chatbox);
         //Adding user input textfield
         input = new JTextField();
@@ -133,10 +131,10 @@ u[1] = new User("Yola");
 
         //Chat frame styles
         self_user_style = new SimpleAttributeSet();
-        StyleConstants.setForeground(self_user_style, Color.GREEN);
+        StyleConstants.setForeground(self_user_style, Color.BLUE);
         StyleConstants.setBold(self_user_style, true);
         others_user_style = new SimpleAttributeSet();
-        StyleConstants.setForeground(others_user_style, Color.ORANGE);
+        StyleConstants.setForeground(others_user_style, Color.BLACK);
         StyleConstants.setBold(others_user_style, true);
         error_style = new SimpleAttributeSet();
         StyleConstants.setForeground(error_style, Color.RED);
@@ -172,6 +170,7 @@ u[1] = new User("Yola");
 
     @Override
     public void receivedMessage(String user, String msg, boolean self) {
+
         try {
             SimpleAttributeSet style;
             if(self){

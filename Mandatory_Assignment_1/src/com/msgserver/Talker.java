@@ -89,10 +89,14 @@ public class Talker implements Runnable, FIFOObserver {
         String str = "LIST";
         synchronized (clients){
             for(int i = 0; i < clients.size(); i++){
-                str += " " + clients.get(i).getUser().getDisplayName();
+                if(clients.get(i).getUser() != null) {
+                    str += " " + clients.get(i).getUser().getDisplayName();
+                }
             }
             for(int i = 0; i < clients.size(); i++){
-                sendMessage(clients.get(i), new Message(str));
+                if(clients.get(i).getUser() != null) {
+                    sendMessage(clients.get(i), new Message(str));
+                }
             }
         }
 

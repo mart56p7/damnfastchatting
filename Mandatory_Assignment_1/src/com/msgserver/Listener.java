@@ -39,7 +39,7 @@ public class Listener implements Runnable {
             synchronized (clients){
                 for(Client client: clients){
                     try {
-                        System.out.println("Messages in Listener " + client.getDataInputStream().available());
+                        //System.out.println("Messages in Listener " + client.getDataInputStream().available());
                         if(client != null && client.getDataInputStream().available() > 0){
                             System.out.println("Data available");
                             System.out.println("Reading data");
@@ -88,7 +88,21 @@ public class Listener implements Runnable {
         }
         else if(msg.equals("QUIT")){
             //Remove client and update client list for all
-            clients.remove(client);
+            System.out.println("\bbefore Removed client " + clients.size());
+            synchronized (clients){
+                clients.remove(client);
+            }
+            for(int i = 0; i < clients.size(); i++){
+                if(clients.get(i).getUser() != null && clients.get(i).getUser().getDisplayName() != null){
+                    System.out.println(clients + " " + clients.get(i).getUser().getDisplayName());
+                }
+                else if(clients.get(i).getUser() != null){
+                    System.out.println(clients + " " + clients.get(i).getUser());
+                }else{
+                    System.out.println(clients);
+                }
+            }
+            System.out.println("\bafter Removed client " + clients.size());
             //Sends user list to all users.
             talker.LIST();
         }

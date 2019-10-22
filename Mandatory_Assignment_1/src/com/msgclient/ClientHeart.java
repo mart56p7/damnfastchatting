@@ -9,10 +9,11 @@ public class ClientHeart implements Runnable {
     private volatile Socket socket = null;
     private boolean shutdown = false;
     private DataOutputStream dos = null;
-
-    public ClientHeart(Socket socket) throws IOException {
+    private ClientMKN client;
+    public ClientHeart(Socket socket, ClientMKN client) throws IOException {
         this.socket = socket;
         dos = new DataOutputStream(this.socket.getOutputStream());
+        this.client = client;
     }
 
     @Override
@@ -30,6 +31,7 @@ public class ClientHeart implements Runnable {
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
+                        client.disconnected();
                     }
                 }while(!shutdown);
             }
