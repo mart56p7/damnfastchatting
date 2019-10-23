@@ -5,7 +5,7 @@ import java.util.List;
 
 // FIFO (First In First Out) Queue
 // This queue is thread safe
-public class FIFO <E> implements FIFOInterface <E>{
+public class FIFO <E> implements StackInterface <E>{
    private volatile LinkedChildElement first = null;
    private volatile LinkedChildElement last = null;
    private volatile List<FIFOObserver> observers = new ArrayList<FIFOObserver>();

@@ -1,8 +1,6 @@
 package com.msgclient;
 
-import com.msgresources.MessageProtocolException;
-import com.msgresources.User;
-import com.msgresources.UserInterface;
+import com.msgresources.*;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -10,35 +8,45 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.List;
 
 
 /**
  * Simple client using Swing
  * */
-public class ClientGUIMKN implements ClientGUIInterface {
+public class ClientGUISwingSwing implements ClientGUISwingInterface {
     private boolean shutdown = false;
-    private ClientInterface clientmkn;
+    private ClientNetworkInterface clientmkn;
 
     private JFrame frame = null;
     private JPanel panel = null;
-    private UserTable ut = null;
+    private UserTableSwing ut = null;
     private JTextField input = null;
     private JTextPane chatbox = null;
+    private JScrollPane chatboxscroll = null;
     private volatile StyledDocument chattext = null;
     private SimpleAttributeSet self_user_style = null;
     private SimpleAttributeSet others_user_style = null;
     private SimpleAttributeSet error_style = null;
-    public ClientGUIMKN(){
+
+    //Doskey - just going to min/max not going in a ring!
+    private List<String> inputqueue = null;
+    private int inputposition = 0;
+
+    public ClientGUISwingSwing(){
+        inputqueue = new ArrayList<>();
+        //Easy testing
+        inputqueue.add("JOIN ImAwesome, 127.0.0.1:5000");
+        inputposition++;
+
         frame = new JFrame("Damn Fast Messaging");
         frame.setResizable(false);
-        frame.setSize(1215, 640);
-        frame.setLayout(null);
+        frame.setSize(900, 640);
+        frame.setLayout(new FlowLayout());
         frame.setVisible(true);
+        frame.setBackground(Color.white);
         frame.addWindowListener(
                 new WindowAdapter()
                 {
@@ -59,28 +67,50 @@ public class ClientGUIMKN implements ClientGUIInterface {
                     }
                 });
         panel = new JPanel();
-        panel.setLayout(null);
-        //panel.setBackground(Color.cyan);
-        panel.setBounds(0, 0, 1230, 600);
-        //Lets add the UserTable
-
-        ut = new UserTable(null, new Dimension(300, 560), ListSelectionModel.SINGLE_SELECTION);
-        ut.setBounds(885, 30, 300, 560);
-        ut.setVisible(true);
-        ut.addMouseListener(this);
-        panel.add(ut);
+        panel.setLayout(new FlowLayout());
+        panel.setBackground(Color.white);
+        panel.setPreferredSize(new Dimension(900, 600));
+        //panel.setBounds(0, 0, 1230, 600);
+        panel.setBackground(Color.white);
 
         //Adding chat textarea
         chatbox = new JTextPane();
-        chatbox.setBounds(15, 30, 850, 530);
         //chatbox.setBackground(Color.YELLOW);
         chatbox.setVisible(true);
         chattext = chatbox.getStyledDocument();
         chatbox.setEditable(false);
-        panel.add(chatbox);
+        chatboxscroll = new JScrollPane(chatbox);
+        chatboxscroll.setPreferredSize(new Dimension(685, 560));
+
+        //Ref: https://stackoverflow.com/questions/4045722/how-to-make-jtextpane-autoscroll-only-when-scroll-bar-is-at-bottom-and-scroll-lo/4047794#4047794
+        chatboxscroll.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+            BoundedRangeModel brm = chatboxscroll.getVerticalScrollBar().getModel();
+            boolean wasAtBottom = true;
+
+            @Override
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                if (!brm.getValueIsAdjusting()) {
+                    if (wasAtBottom)
+                        brm.setValue(brm.getMaximum());
+                } else
+                    wasAtBottom = ((brm.getValue() + brm.getExtent()) == brm.getMaximum());
+
+            }
+        });
+        panel.add(chatboxscroll);
+
+        //Lets add the user table
+        ut = new UserTableSwing(null, new Dimension(200, 560), ListSelectionModel.SINGLE_SELECTION);
+        ut.setPreferredSize(new Dimension(200, 560));
+        //ut.setBounds(885, 30, 300, 560);
+        ut.setVisible(true);
+        ut.addMouseListener(this);
+        panel.add(ut);
+
         //Adding user input textfield
         input = new JTextField();
-        input.setBounds(15, 570, 850, 20);
+        input.setPreferredSize(new Dimension(frame.getWidth()-10, 20));
+        //input.setBounds(15, 570, 850, 20);
         input.setVisible(true);
         input.addKeyListener(
                 new KeyListener() {
@@ -95,7 +125,8 @@ public class ClientGUIMKN implements ClientGUIInterface {
                             System.out.println("enter");
 
                             String cmd = getInput();
-
+                            inputqueue.add(cmd);
+                            inputposition = inputqueue.size();
                             //Lets call our client with data
                             try {
                                 clientmkn.send(cmd);
@@ -113,6 +144,18 @@ public class ClientGUIMKN implements ClientGUIInterface {
                         else{
                             if(input.getText().length() > 255){
                                 error("Message max is 255 characters. Please shorten your message");
+
+                            }
+                            //38 arrow up - get previous msg
+                            //40 Arrow down
+                            if(e.getKeyCode() == 38 || e.getKeyCode() == 40) {
+                                if (e.getKeyCode() == 38) {
+                                    inputposition = Math.max(inputposition - 1, 0);
+                                }
+                                if (e.getKeyCode() == 40) {
+                                    inputposition = Math.min(inputposition + 1, inputqueue.size()-1);
+                                }
+                                input.setText(inputqueue.get(inputposition));
                             }
                         }
                     }
@@ -124,10 +167,10 @@ public class ClientGUIMKN implements ClientGUIInterface {
                 }
         );
         panel.add(input);
+
         //Adding panel to jframe
         frame.add(panel);
-        panel.setVisible(true);
-        frame.repaint();
+        frame.setVisible(true);
 
         //Chat frame styles
         self_user_style = new SimpleAttributeSet();
@@ -139,7 +182,7 @@ public class ClientGUIMKN implements ClientGUIInterface {
         error_style = new SimpleAttributeSet();
         StyleConstants.setForeground(error_style, Color.RED);
         StyleConstants.setBold(error_style, true);
-        clientmkn = new ClientMKN(this);
+        clientmkn = new ClientNetwork(this);
         (new Thread(clientmkn)).start();
     }
 
@@ -158,10 +201,6 @@ public class ClientGUIMKN implements ClientGUIInterface {
 
     private String help(){
         return "To connect to a server write ???";
-    }
-
-    public static void main(String[] args){
-        new ClientGUIMKN();
     }
 
     public void receivedMessage(String user, String msg){

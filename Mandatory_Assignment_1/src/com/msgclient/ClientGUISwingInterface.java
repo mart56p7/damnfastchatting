@@ -4,7 +4,7 @@ import com.msgresources.UserInterface;
 
 import java.util.List;
 
-public interface ClientGUIInterface {
+public interface ClientGUISwingInterface {
     void receivedMessage(String user, String msg, boolean self);
     void error(String errmsg);
     void updateUserList(List<UserInterface> users);

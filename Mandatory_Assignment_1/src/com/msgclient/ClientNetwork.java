@@ -13,15 +13,19 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ClientMKN implements ClientInterface {
+
+/**
+ * This class handles input from the GUI, and formats it to application level commands, that are send to the chat server
+ * */
+public class ClientNetwork implements ClientNetworkInterface {
    private boolean shutdown = false;
-   private ClientGUIInterface cgui = null;
+   private ClientGUISwingInterface cgui = null;
 
    //Connection specific settings
    private boolean connected = false;
    private String username = null;
    private Socket socket = null;
-   private ClientHeart heart = null;
+   private ClientNetworkHeartbeat heart = null;
    private Thread heartThread = null;
    private DataInputStream dis = null;
    private DataOutputStream dos = null;
@@ -32,7 +36,7 @@ public class ClientMKN implements ClientInterface {
    private static final Pattern error_pattern = Pattern.compile("\\AJ_ER (\\d+):((.){1,255})\\Z");
    private static final Pattern list_pattern = Pattern.compile("([a-zA-Z_0-9-]{1,12})+"); //LIST must be removed before running regex on string
 
-    public ClientMKN(ClientGUIInterface cgui) {
+    public ClientNetwork(ClientGUISwingInterface cgui) {
         this.cgui = cgui;
         help();
    }
@@ -177,7 +181,7 @@ public class ClientMKN implements ClientInterface {
             System.out.println("J_OK " + connected);
             cgui.receivedMessage("System", "You are now connected to " + socket.getInetAddress() + " on port " + socket.getPort(), true);
             try {
-                this.heart = new ClientHeart(socket, this);
+                this.heart = new ClientNetworkHeartbeat(socket, this);
                 this.heartThread = new Thread(this.heart);
                 heartThread.start();
             } catch (IOException e) {

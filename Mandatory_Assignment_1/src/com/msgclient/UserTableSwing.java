@@ -11,31 +11,31 @@ import java.awt.event.*;
  * In the constructor it can be set, if the user has the option to select one or more options.
  * Objects that are parsed to this class, must implement UserInterface, they are then listed showing their name through calling getDisplayName() on the object.
  */
-public class UserTable extends JPanel
+public class UserTableSwing extends JPanel
 {
     JList<Object> list = null;
     DefaultListModel<Object> model = null;
     UserInterface[] options;
 
-    public UserTable(UserInterface[] options)
+    public UserTableSwing(UserInterface[] options)
     {
         this(options, new Dimension(300, 200));
     }
 
 
-    public UserTable(UserInterface[] options, Dimension size)
+    public UserTableSwing(UserInterface[] options, Dimension size)
     {
         this(options, size, ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     }
 
 
-    public UserTable(UserInterface[] options, Dimension size, int selectionmode)
+    public UserTableSwing(UserInterface[] options, Dimension size, int selectionmode)
     {
         this(options, new Dimension(300, 200), selectionmode, BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
     }
 
 
-    public UserTable(UserInterface[] options, Dimension size, int selectionmode, Border border)
+    public UserTableSwing(UserInterface[] options, Dimension size, int selectionmode, Border border)
     {
         super(new GridLayout(1,0));
         this.options = options;
@@ -85,7 +85,7 @@ public class UserTable extends JPanel
     /**
      * Adds our generic EO mouse adapter to the list, this will set the data of the list in the EOOperation defined and do a runCommand with the EOOperation. If the user right clicks the cell
      */
-    public void addMouseListener(ClientGUIInterface gui)
+    public void addMouseListener(ClientGUISwingInterface gui)
     {
         MouseAdapter mouseadapter =
                 new java.awt.event.MouseAdapter()
