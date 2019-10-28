@@ -16,6 +16,9 @@ public class StartServer {
         (new Thread(talker)).start();
         (new Thread(listener)).start();
 
+        Disconnector disconnector = new Disconnector(soc, talker);
+        (new Thread(disconnector)).start();
+
         Server server = new Server(soc, 5000);
     }
 }
