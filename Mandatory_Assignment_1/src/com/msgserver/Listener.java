@@ -91,6 +91,7 @@ public class Listener implements Runnable {
             System.out.println("\bbefore Removed client " + clients.size());
             synchronized (clients){
                 clients.remove(client);
+                client.close();
             }
             for(int i = 0; i < clients.size(); i++){
                 if(clients.get(i).getUser() != null && clients.get(i).getUser().getDisplayName() != null){

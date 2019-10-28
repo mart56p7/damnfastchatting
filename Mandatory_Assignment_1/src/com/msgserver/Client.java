@@ -62,4 +62,18 @@ public class Client {
     public long getTime(){
         return this.lastcommunication;
     }
+
+    public void close(){
+        try {
+            dos = null;
+            dis = null;
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            socket = null;
+            user = null;
+        }
+    }
 }

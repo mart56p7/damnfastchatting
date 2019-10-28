@@ -54,6 +54,7 @@ public class Disconnector implements Runnable {
         synchronized (clients){
             talker.sendMessage(client, new Message("You have been disconnected from the server"));
             clients.remove(client);
+            client.close();
             talker.LIST();
             notify();
         }
