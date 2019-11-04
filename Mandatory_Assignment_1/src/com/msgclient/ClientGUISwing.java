@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Simple client using Swing
  * */
-public class ClientGUISwingSwing implements ClientGUISwingInterface {
+public class ClientGUISwing implements ClientGUISwingInterface {
     private boolean shutdown = false;
     private ClientNetworkInterface clientmkn;
 
@@ -35,7 +35,7 @@ public class ClientGUISwingSwing implements ClientGUISwingInterface {
     private List<String> inputqueue = null;
     private int inputposition = 0;
 
-    public ClientGUISwingSwing(){
+    public ClientGUISwing(){
         inputqueue = new ArrayList<>();
         //Easy testing
         inputqueue.add("JOIN ImAwesome, 127.0.0.1:5000");

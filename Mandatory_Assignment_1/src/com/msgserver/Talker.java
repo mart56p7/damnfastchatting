@@ -1,13 +1,9 @@
 package com.msgserver;
 
-import com.msgresources.FIFO;
-import com.msgresources.FIFOObserver;
-import com.msgresources.Message;
-import com.msgresources.MessageProtocolException;
+import com.msgresources.*;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.net.Socket;
 import java.util.List;
 
 public class Talker implements Runnable, FIFOObserver {

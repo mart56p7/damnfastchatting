@@ -1,5 +1,6 @@
 package com.msgclient;
 
+import com.msgresources.Message;
 import com.msgresources.MessageProtocolException;
 import com.msgresources.User;
 import com.msgresources.UserInterface;
@@ -20,15 +21,9 @@ import java.util.regex.Pattern;
 public class ClientNetwork implements ClientNetworkInterface {
    private boolean shutdown = false;
    private ClientGUISwingInterface cgui = null;
+   private ClientMessageInController cmic = null;
+   private Client client;
 
-   //Connection specific settings
-   private boolean connected = false;
-   private String username = null;
-   private Socket socket = null;
-   private ClientNetworkHeartbeat heart = null;
-   private Thread heartThread = null;
-   private DataInputStream dis = null;
-   private DataOutputStream dos = null;
 
    //Regex
    private static final Pattern join_pattern = Pattern.compile("\\AJOIN ([a-zA-Z_0-9-]{1,12}), ((\\d{1,3}).(\\d{1,3}).(\\d{1,3}).(\\d{1,3})):(\\d{1,65535})\\Z");
@@ -36,15 +31,21 @@ public class ClientNetwork implements ClientNetworkInterface {
    private static final Pattern error_pattern = Pattern.compile("\\AJ_ER (\\d+):((.){1,255})\\Z");
    private static final Pattern list_pattern = Pattern.compile("([a-zA-Z_0-9-]{1,12})+"); //LIST must be removed before running regex on string
 
-    public ClientNetwork(ClientGUISwingInterface cgui) {
+    public ClientNetwork(ClientGUISwingInterface cgui, Client client, ClientMessageInController cmic){
         this.cgui = cgui;
+        this.client = new Client();
+        this.cmic = cmic;
         help();
+    }
+
+    public ClientNetwork(ClientGUISwingInterface cgui) {
+        this(cgui, new Client(), null);
    }
 
    public void shutdown(){
        shutdown = true;
-       if(heart != null) {
-           heart.shutdown();
+       if(client != null){
+           client.destroy();
        }
    }
 
@@ -65,6 +66,7 @@ public class ClientNetwork implements ClientNetworkInterface {
    }
 
    public void send(String msg) throws MessageProtocolException{
+        /*
        //Remove any spaces
        System.out.println("send: " + msg);
        msg.trim();
@@ -105,10 +107,29 @@ public class ClientNetwork implements ClientNetworkInterface {
                }
            }
        }
+
+         */
    }
 
    @Override
    public void run() {
+        do{
+            if(client.getSocket() != null && client.getDataInputStream() != null){
+                try {
+                    if (client.getDataInputStream().available() > 0) {
+                        Message msg = new Message(client.getDataInputStream().readUTF());
+                        if(cmic != null){
+                            if(cmic.command(msg) == false){
+                                cgui.receivedMessage("System", "Unknown command received from server", true);
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }while(!shutdown);
+        /*
        do{
            if(socket != null && dis != null) {
                synchronized (dis) {
@@ -159,8 +180,11 @@ public class ClientNetwork implements ClientNetworkInterface {
                e.printStackTrace();
            }
        }while(!shutdown);
+
+         */
    }
 
+   /*
    public void JOIN(String username, String server, int port) throws MessageProtocolException {
        try {
            this.socket = new Socket(server, port);
@@ -249,4 +273,6 @@ public class ClientNetwork implements ClientNetworkInterface {
         dis = null;
         dos = null;
     }
+
+    */
 }

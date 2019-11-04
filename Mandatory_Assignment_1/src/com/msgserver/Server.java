@@ -1,11 +1,7 @@
 package com.msgserver;
 
-import com.msgresources.FIFO;
-import com.msgresources.Message;
-
 import java.net.*;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Server

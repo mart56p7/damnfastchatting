@@ -2,7 +2,6 @@ package com.msgserver;
 
 import com.msgresources.Message;
 
-import java.io.IOException;
 import java.util.List;
 
 //We disconnects clients after 180 seconds

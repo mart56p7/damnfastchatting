@@ -6,32 +6,28 @@ import java.net.Socket;
 
 public class ClientNetworkHeartbeat implements Runnable {
 
-    private volatile Socket socket = null;
+    private volatile Client client = null;
     private boolean shutdown = false;
-    private DataOutputStream dos = null;
-    private ClientNetwork client;
-    public ClientNetworkHeartbeat(Socket socket, ClientNetwork client) throws IOException {
-        this.socket = socket;
-        dos = new DataOutputStream(this.socket.getOutputStream());
+
+    public ClientNetworkHeartbeat(Client client) throws IOException {
         this.client = client;
     }
 
     @Override
     public void run() {
         try {
-            if(this.socket != null) {
+            if(this.client.getSocket() != null) {
                 do{
                     synchronized (this) {
                         wait(1000 * 60);
                     }
                     try {
-                        synchronized (socket){
+                        synchronized (this.client.getSocket()){
                             //socket send heartbeat
-                            dos.writeUTF("IMAV");
+                            client.getDataOutputStream().writeUTF("IMAV");
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
-                        client.disconnected();
                     }
                 }while(!shutdown);
             }

@@ -1,5 +1,6 @@
-package com.msgserver;
+package com.msgclient;
 
+import com.msgresources.MessageProtocolException;
 import com.msgresources.User;
 
 import java.io.DataInputStream;
@@ -12,8 +13,10 @@ public class Client {
     private User user = null;
     private DataOutputStream dos = null;
     private DataInputStream dis = null;
+    private Thread heartThread = null;
+    private ClientNetworkHeartbeat heart = null;
+    private String username = null;
     private long lastcommunication = 0;
-
     private boolean connected = false;
 
     public Client(){
@@ -66,14 +69,14 @@ public class Client {
     }
 
     public void updateTime(){
-        lastcommunication = java.lang.System.currentTimeMillis();
+        lastcommunication = System.currentTimeMillis();
     }
 
     public long getTime(){
         return this.lastcommunication;
     }
 
-    public void close(){
+    public void destroy(){
         try {
             dos = null;
             dis = null;
@@ -93,5 +96,29 @@ public class Client {
 
     public void setConnected(boolean connected) {
         this.connected = connected;
+    }
+
+    public void startHeart() throws MessageProtocolException{
+        if(this.socket != null) {
+            try {
+                this.heart = new ClientNetworkHeartbeat(this);
+                this.heartThread = new Thread(this.heart);
+                heartThread.start();
+            } catch (IOException e) {
+                reset();
+                throw new MessageProtocolException("Failed to connect - Missing a heart");
+            }
+        }
+    }
+
+    private void reset(){
+        //Connection specific settings
+        connected = false;
+        username = null;
+        socket = null;
+        heart = null;
+        heartThread = null;
+        dis = null;
+        dos = null;
     }
 }
