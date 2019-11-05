@@ -1,5 +1,6 @@
 package com.msgclient;
 
+import com.msgresources.Message;
 import com.msgresources.MessageProtocolException;
 import com.msgresources.User;
 
@@ -109,6 +110,33 @@ public class Client {
                 throw new MessageProtocolException("Failed to connect - Missing a heart");
             }
         }
+    }
+
+    public void sendMessage(String msg) throws MessageProtocolException {
+        if(isConnected()){
+            try {
+                System.out.println("Client sendMessage: " + msg);
+                getDataOutputStream().writeUTF(msg);
+            } catch (IOException e) {
+                new MessageProtocolException(e.getMessage());
+            }
+        }
+    }
+
+    public String getMessage() {
+        if (getSocket() != null && getDataInputStream() != null) {
+            try {
+                if (getDataInputStream().available() > 0) {
+                    String msg = getDataInputStream().readUTF();
+                    System.out.println("getMessage: " + msg);
+                    return msg;
+                }
+                System.out.println("aaa");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
     private void reset(){

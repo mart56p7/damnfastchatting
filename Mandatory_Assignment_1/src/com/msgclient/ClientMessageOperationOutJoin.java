@@ -9,10 +9,10 @@ import java.net.Socket;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ClientMessageInOperationJoin extends ClientMessageInOperation {
+public class ClientMessageOperationOutJoin extends ClientMessageOperation {
     private static final Pattern join_pattern = Pattern.compile("\\AJOIN ([a-zA-Z_0-9-]{1,12}), ((\\d{1,3}).(\\d{1,3}).(\\d{1,3}).(\\d{1,3})):(\\d{1,65535})\\Z");
 
-    public ClientMessageInOperationJoin(Client client, ClientGUISwingInterface cgui){
+    public ClientMessageOperationOutJoin(Client client, ClientGUISwingInterface cgui){
         super(client, cgui);
     }
 
@@ -39,16 +39,17 @@ public class ClientMessageInOperationJoin extends ClientMessageInOperation {
     public void JOIN(String username, String server, int port) throws MessageProtocolException {
         try {
             this.client.setSocket(new Socket(server, port));
-            serverSend("JOIN " + username + ", " + server + ":" + port);
+            this.client.sendMessage("JOIN " + username + ", " + server + ":" + port);
             this.client.setUser(new User(username));
         } catch (IOException e) {
             throw new MessageProtocolException("Failed to connect to " + server + ":" + port + " with message: " + e.getMessage());
         } catch (MessageProtocolException m){
+            QUIT();
             throw new MessageProtocolException("Failed to connect to " + server + ":" + port + " with message: " + m.getMessage());
         }
     }
 
     public void QUIT() throws MessageProtocolException {
-        serverSend("QUIT");
+        this.client.sendMessage("QUIT");
     }
 }

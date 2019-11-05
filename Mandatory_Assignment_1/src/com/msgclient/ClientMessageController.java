@@ -3,10 +3,10 @@ package com.msgclient;
 import com.msgresources.Message;
 import com.msgresources.MessageProtocolException;
 
-public class ClientMessageInController {
-    ClientMessageInOperation[] msgoperations;
+public class ClientMessageController {
+    ClientMessageOperation[] msgoperations;
 
-    public ClientMessageInController(ClientMessageInOperation[] msgoperations){
+    public ClientMessageController(ClientMessageOperation[] msgoperations){
         this.msgoperations = msgoperations;
     }
     /*
@@ -17,12 +17,12 @@ public class ClientMessageInController {
         boolean result = false;
         try {
 
-            for (ClientMessageInOperation msgoperation : msgoperations) {
+            for (ClientMessageOperation msgoperation : msgoperations) {
                 result = result || msgoperation.command(cmd);
             }
         }
         catch(MessageProtocolException mpe){
-            System.out.println("ClientMessageInController " + mpe.getMessage());
+            System.out.println("ClientMessageController " + mpe.getMessage());
         }
         return result;
     }

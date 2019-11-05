@@ -3,9 +3,9 @@ package com.msgclient;
 import com.msgresources.Message;
 import com.msgresources.MessageProtocolException;
 
-public class ClientMessageInOperationJ_OK extends ClientMessageInOperation {
+public class ClientMessageOperationInJ_OK extends ClientMessageOperation {
 
-    public ClientMessageInOperationJ_OK(Client client, ClientGUISwingInterface cgui){
+    public ClientMessageOperationInJ_OK(Client client, ClientGUISwingInterface cgui){
         super(client, cgui);
     }
 
@@ -13,6 +13,7 @@ public class ClientMessageInOperationJ_OK extends ClientMessageInOperation {
     public boolean command(Message msg) throws MessageProtocolException {
         if (msg.getMessage().equals("J_OK")) {
             try {
+                System.out.println("Received OK");
                 J_OK();
             } catch (MessageProtocolException e) {
                 throw new MessageProtocolException("Failed to finish handshake with server error message " + e.getMessage());

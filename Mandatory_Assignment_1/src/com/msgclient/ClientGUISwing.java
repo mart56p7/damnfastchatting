@@ -182,7 +182,22 @@ public class ClientGUISwing implements ClientGUISwingInterface {
         error_style = new SimpleAttributeSet();
         StyleConstants.setForeground(error_style, Color.RED);
         StyleConstants.setBold(error_style, true);
-        clientmkn = new ClientNetwork(this);
+
+        //Setting up application layer in network
+        Client client = new Client();
+        ClientMessageOperation[] cmo = new ClientMessageOperation[1];
+        cmo[0] = new ClientMessageOperationOutJoin(client, this);
+        ClientMessageController cmoc = new ClientMessageController(cmo);
+
+        ClientMessageOperation[] cmi = new ClientMessageOperation[2];
+        cmi[0] = new ClientMessageOperationInJ_OK(client, this);
+        cmi[1] = new ClientMessageOperationInList(client, this);
+        ClientMessageController cmic = new ClientMessageController(cmo);
+
+        clientmkn = new ClientNetwork(this,
+                                            new Client(),
+                                            cmic,
+                                            cmoc);
         (new Thread(clientmkn)).start();
     }
 

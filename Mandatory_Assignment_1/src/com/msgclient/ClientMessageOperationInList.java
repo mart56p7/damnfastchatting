@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ClientMessageInOperationList extends ClientMessageInOperation {
+public class ClientMessageOperationInList extends ClientMessageOperation {
 
     private static final Pattern list_pattern = Pattern.compile("([a-zA-Z_0-9-]{1,12})+"); //LIST must be removed before running regex on string
 
-    public ClientMessageInOperationList(Client client, ClientGUISwingInterface cgui){
+    public ClientMessageOperationInList(Client client, ClientGUISwingInterface cgui){
         super(client, cgui);
     }
 

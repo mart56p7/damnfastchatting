@@ -2,16 +2,8 @@ package com.msgclient;
 
 import com.msgresources.Message;
 import com.msgresources.MessageProtocolException;
-import com.msgresources.User;
-import com.msgresources.UserInterface;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
@@ -21,7 +13,8 @@ import java.util.regex.Pattern;
 public class ClientNetwork implements ClientNetworkInterface {
    private boolean shutdown = false;
    private ClientGUISwingInterface cgui = null;
-   private ClientMessageInController cmic = null;
+   private ClientMessageController cmic = null;
+    private ClientMessageController cmoc = null;
    private Client client;
 
 
@@ -31,15 +24,16 @@ public class ClientNetwork implements ClientNetworkInterface {
    private static final Pattern error_pattern = Pattern.compile("\\AJ_ER (\\d+):((.){1,255})\\Z");
    private static final Pattern list_pattern = Pattern.compile("([a-zA-Z_0-9-]{1,12})+"); //LIST must be removed before running regex on string
 
-    public ClientNetwork(ClientGUISwingInterface cgui, Client client, ClientMessageInController cmic){
+    public ClientNetwork(ClientGUISwingInterface cgui, Client client, ClientMessageController cmic, ClientMessageController cmoc){
         this.cgui = cgui;
         this.client = new Client();
         this.cmic = cmic;
+        this.cmoc = cmoc;
         help();
     }
 
     public ClientNetwork(ClientGUISwingInterface cgui) {
-        this(cgui, new Client(), null);
+        this(cgui, new Client(), null, null);
    }
 
    public void shutdown(){
@@ -66,7 +60,8 @@ public class ClientNetwork implements ClientNetworkInterface {
    }
 
    public void send(String msg) throws MessageProtocolException{
-        /*
+        cmoc.command(new Message(msg));
+                /*
        //Remove any spaces
        System.out.println("send: " + msg);
        msg.trim();
@@ -115,17 +110,11 @@ public class ClientNetwork implements ClientNetworkInterface {
    public void run() {
         do{
             if(client.getSocket() != null && client.getDataInputStream() != null){
-                try {
-                    if (client.getDataInputStream().available() > 0) {
-                        Message msg = new Message(client.getDataInputStream().readUTF());
-                        if(cmic != null){
-                            if(cmic.command(msg) == false){
-                                cgui.receivedMessage("System", "Unknown command received from server", true);
-                            }
-                        }
+                String msg = client.getMessage();
+                if(msg != null && cmic != null){
+                    if(cmic.command(new Message(msg)) == false){
+                        cgui.receivedMessage("System", "Unknown command received from server", true);
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
             }
         }while(!shutdown);
