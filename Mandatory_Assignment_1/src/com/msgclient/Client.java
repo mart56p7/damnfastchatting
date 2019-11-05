@@ -80,7 +80,9 @@ public class Client {
         try {
             dos = null;
             dis = null;
-            socket.close();
+            if(socket != null){
+                socket.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

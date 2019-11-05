@@ -149,7 +149,7 @@ public class Listener implements Runnable {
             }
         }
         else{
-            talker.J_ER(client, 400, "Not uniqueu username");
+            talker.J_ER(client, 400, "Not unique username");
         }
     }
 
