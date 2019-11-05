@@ -10,4 +10,5 @@ public interface ClientGUISwingInterface {
     void updateUserList(List<UserInterface> users);
     void userSelected(UserInterface user);
     void shutdown();
+    void setClientNetworkInterface(ClientNetworkInterface cni);
 }

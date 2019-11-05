@@ -24,8 +24,8 @@ public class ClientMessageOperationInJ_OK extends ClientMessageOperation {
     }
 
     public void J_OK() throws MessageProtocolException {
-        if(client.getUser() != null && client.getSocket() != null && client.isConnected() == false){
-            client.setConnected(true);
+        System.out.println(client.getUser() + " -- " + client.getSocket() + " -- " + client.isConnected());
+        if(client.getUser() != null && client.getSocket() != null && client.isConnected()){
             System.out.println("J_OK " + client.isConnected());
             cgui.receivedMessage("System", "You are now connected to " + client.getSocket().getInetAddress() + " on port " + client.getSocket().getPort(), true);
         }

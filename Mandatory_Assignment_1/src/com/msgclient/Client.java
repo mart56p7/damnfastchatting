@@ -1,6 +1,5 @@
 package com.msgclient;
 
-import com.msgresources.Message;
 import com.msgresources.MessageProtocolException;
 import com.msgresources.User;
 
@@ -131,7 +130,6 @@ public class Client {
                     System.out.println("getMessage: " + msg);
                     return msg;
                 }
-                System.out.println("aaa");
             } catch (IOException e) {
                 e.printStackTrace();
             }

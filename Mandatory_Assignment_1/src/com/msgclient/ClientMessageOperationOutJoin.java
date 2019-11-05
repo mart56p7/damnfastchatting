@@ -39,8 +39,8 @@ public class ClientMessageOperationOutJoin extends ClientMessageOperation {
     public void JOIN(String username, String server, int port) throws MessageProtocolException {
         try {
             this.client.setSocket(new Socket(server, port));
-            this.client.sendMessage("JOIN " + username + ", " + server + ":" + port);
             this.client.setUser(new User(username));
+            this.client.sendMessage("JOIN " + username + ", " + server + ":" + port);
         } catch (IOException e) {
             throw new MessageProtocolException("Failed to connect to " + server + ":" + port + " with message: " + e.getMessage());
         } catch (MessageProtocolException m){

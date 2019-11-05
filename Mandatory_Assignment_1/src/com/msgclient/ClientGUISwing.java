@@ -18,7 +18,7 @@ import java.util.List;
  * */
 public class ClientGUISwing implements ClientGUISwingInterface {
     private boolean shutdown = false;
-    private ClientNetworkInterface clientmkn;
+    private ClientNetworkInterface clientobj = null;
 
     private JFrame frame = null;
     private JPanel panel = null;
@@ -54,7 +54,9 @@ public class ClientGUISwing implements ClientGUISwingInterface {
                     {
                         System.out.println("windowClosed");
                         shutdown();
-                        clientmkn.shutdown();
+                        if(clientobj != null) {
+                            clientobj.shutdown();
+                        }
                         Runtime.getRuntime().exit(0);
                     }
 
@@ -62,7 +64,9 @@ public class ClientGUISwing implements ClientGUISwingInterface {
                     {
                         System.out.println("windowClosing");
                         shutdown();
-                        clientmkn.shutdown();
+                        if(clientobj != null){
+                            clientobj.shutdown();
+                        }
                         Runtime.getRuntime().exit(0);
                     }
                 });
@@ -129,7 +133,9 @@ public class ClientGUISwing implements ClientGUISwingInterface {
                             inputposition = inputqueue.size();
                             //Lets call our client with data
                             try {
-                                clientmkn.send(cmd);
+                                if(clientobj != null){
+                                    clientobj.send(cmd);
+                                }
                             } catch (MessageProtocolException ex) {
                                 error(ex.getMessage());
                             }
@@ -182,23 +188,6 @@ public class ClientGUISwing implements ClientGUISwingInterface {
         error_style = new SimpleAttributeSet();
         StyleConstants.setForeground(error_style, Color.RED);
         StyleConstants.setBold(error_style, true);
-
-        //Setting up application layer in network
-        Client client = new Client();
-        ClientMessageOperation[] cmo = new ClientMessageOperation[1];
-        cmo[0] = new ClientMessageOperationOutJoin(client, this);
-        ClientMessageController cmoc = new ClientMessageController(cmo);
-
-        ClientMessageOperation[] cmi = new ClientMessageOperation[2];
-        cmi[0] = new ClientMessageOperationInJ_OK(client, this);
-        cmi[1] = new ClientMessageOperationInList(client, this);
-        ClientMessageController cmic = new ClientMessageController(cmo);
-
-        clientmkn = new ClientNetwork(this,
-                                            new Client(),
-                                            cmic,
-                                            cmoc);
-        (new Thread(clientmkn)).start();
     }
 
     public void print(String str){
@@ -207,7 +196,9 @@ public class ClientGUISwing implements ClientGUISwingInterface {
 
     public void shutdown(){
         this.shutdown = true;
-        clientmkn.shutdown();
+        if(clientobj != null){
+            clientobj.shutdown();
+        }
     }
 
     private String welcome(){
@@ -265,6 +256,10 @@ public class ClientGUISwing implements ClientGUISwingInterface {
         synchronized (input) {
             this.input.setText(this.input.getText() + user.getDisplayName());
         }
+    }
+    @Override
+    public void setClientNetworkInterface(ClientNetworkInterface cni){
+        this.clientobj = cni;
     }
 
     private String getInput(){
