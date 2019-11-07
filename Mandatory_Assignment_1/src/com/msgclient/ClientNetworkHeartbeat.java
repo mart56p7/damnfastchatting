@@ -4,6 +4,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+/**
+ * Heartbeat
+ * */
 public class ClientNetworkHeartbeat implements Runnable {
 
     private volatile Client client = null;

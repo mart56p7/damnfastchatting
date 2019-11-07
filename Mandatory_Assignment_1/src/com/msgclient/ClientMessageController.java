@@ -3,6 +3,9 @@ package com.msgclient;
 import com.msgresources.Message;
 import com.msgresources.MessageProtocolException;
 
+// https://www.gofpatterns.com/behavioral-design-patterns/behavioral-patterns/chain-of-responsibility.php
+// Implementering af chain of responsibility pattern.
+
 public class ClientMessageController {
     ClientMessageOperation[] msgoperations;
 

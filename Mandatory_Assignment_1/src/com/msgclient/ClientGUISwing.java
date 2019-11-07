@@ -15,6 +15,7 @@ import java.util.List;
 
 /**
  * Simple client using Swing
+ * Implementation of a mediator between GUI and business logic
  * */
 public class ClientGUISwing implements ClientGUISwingInterface {
     private boolean shutdown = false;
@@ -194,6 +195,9 @@ public class ClientGUISwing implements ClientGUISwingInterface {
         System.out.println(str);
     }
 
+    /**
+     * Called the client is shutting down.
+     * */
     public void shutdown(){
         this.shutdown = true;
         if(clientobj != null){
@@ -209,10 +213,17 @@ public class ClientGUISwing implements ClientGUISwingInterface {
         return "To connect to a server write ???";
     }
 
+
+    /**
+     * Called to display new text in the GUI Client
+     * */
     public void receivedMessage(String user, String msg){
         this.receivedMessage(user, msg, true);
     }
 
+    /**
+     * Called to display new text in the GUI Client
+     * */
     @Override
     public void receivedMessage(String user, String msg, boolean self) {
 
@@ -234,6 +245,9 @@ public class ClientGUISwing implements ClientGUISwingInterface {
         }
     }
 
+    /**
+     * Called to display errors to the GUI Client
+     * */
     @Override
     public void error(String errmsg) {
         try {
@@ -246,6 +260,10 @@ public class ClientGUISwing implements ClientGUISwingInterface {
         }
     }
 
+
+    /**
+     * Called to update the User List
+     * */
     @Override
     public void updateUserList(List<UserInterface> users) {
         ut.setList(users);

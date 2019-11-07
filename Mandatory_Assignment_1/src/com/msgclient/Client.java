@@ -8,6 +8,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+/**
+ * Data that is associated with a client.
+ * */
 public class Client {
     private Socket socket = null;
     private User user = null;
