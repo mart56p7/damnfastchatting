@@ -7,13 +7,18 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Listener implements Runnable {
 
+/**
+ * Listen from incomming client data
+ * The initially client connection is made in the Server object.
+ * */
+public class Listener implements Runnable {
     private volatile List<Client> clients;
     private volatile FIFO<Message> msgqueue;
     private final int waittime = 100;
     private boolean running = true;
     private Talker talker;
+    private Thread me = null;
 
     private static final Pattern join_pattern = Pattern.compile("\\AJOIN ([a-zA-Z_0-9-]{1,12}), ((\\d{1,3}).(\\d{1,3}).(\\d{1,3}).(\\d{1,3})):(\\d{1,65535})\\Z");
     private static final Pattern msg_pattern = Pattern.compile("\\ADATA ([a-zA-Z_0-9-]{1,12}):((.){1,255})\\Z");
@@ -27,6 +32,7 @@ public class Listener implements Runnable {
 
     @Override
     public void run() {
+        me = Thread.currentThread();
         while(running){
             //System.out.println("Running" + clients.size());
             long start = System.currentTimeMillis();
@@ -56,7 +62,7 @@ public class Listener implements Runnable {
             long end = System.currentTimeMillis();
             try {
                 //System.out.println("Sleeping" + Math.min(waittime - (end - start), 0));
-                Thread.sleep(Math.max(waittime - (end - start), 0));
+                wait(Math.max(waittime - (end - start), 0));
                 //System.out.println("Im awake");
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -66,8 +72,14 @@ public class Listener implements Runnable {
 
     public void Shutdown(){
         running = false;
+        if(me != null){
+            me.interrupt();
+        }
     }
 
+    /*
+    * The message controller takes a String message from the client and interpretates it.
+    * */
     private void msgcontroller(Client client, String msg) throws MessageProtocolException{
         Matcher matcher_join = join_pattern.matcher(msg);
         Matcher matcher_msg = msg_pattern.matcher(msg);
@@ -116,6 +128,9 @@ public class Listener implements Runnable {
         }
     }
 
+    /*
+    * Message type and handle: START
+    * */
     private Message errormsg(int id, String msg){
         return new Message("J_ER "+id+":"+msg);
     }
@@ -152,5 +167,8 @@ public class Listener implements Runnable {
             talker.J_ER(client, 400, "Not unique username");
         }
     }
+    /*
+     * Message type and handle: END
+     * */
 
 }

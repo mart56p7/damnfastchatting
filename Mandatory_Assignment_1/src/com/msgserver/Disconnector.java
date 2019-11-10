@@ -4,15 +4,22 @@ import com.msgresources.Message;
 
 import java.util.List;
 
-//We disconnects clients after 180 seconds
+/**
+ * Disconnects clients after 180 seconds of inactivity
+ */
+
 public class Disconnector implements Runnable {
     private final List<Client> clients;
     private Talker talker;
     private boolean shutdown = false;
     private long nextchecktime = 0;
     private static long defaultchecktime = 180000;
+    private Thread me = null;
 
-
+    /**
+     * @param clients the list of clients
+     * @param talker the object that is used to talk to clients.
+     * */
     public Disconnector(List<Client> clients, Talker talker){ // !!!!
         this.clients = clients;
         this.nextchecktime = 10000;
@@ -20,8 +27,12 @@ public class Disconnector implements Runnable {
     }
 
 
+    /**
+     * Loops through clients, and disconnects inactive clients.
+     * */
     @Override
     public void run() {
+        me = Thread.currentThread();
         while(!shutdown){
             synchronized (this){
                 try {
@@ -45,11 +56,20 @@ public class Disconnector implements Runnable {
         }
     }
 
+    /**
+     * Shutdowns the Disconnector object
+     * */
     public void shutdown(){
         this.shutdown = true;
+        if(me != null){
+            me.interrupt();
+        }
     }
 
-    public void disconnect(Client client){
+    /**
+     * @param client disconnects the given client
+     * */
+    private void disconnect(Client client){
         synchronized (clients){
             talker.sendMessage(client, new Message("You have been disconnected from the server"));
             clients.remove(client);

@@ -6,6 +6,9 @@ import com.msgresources.Message;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class for starting the server and related objects
+ * */
 public class StartServer {
     public static void main(String args[])
     {

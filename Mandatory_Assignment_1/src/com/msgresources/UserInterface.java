@@ -5,5 +5,8 @@ package com.msgresources;
  */
 public interface UserInterface
 {
-    public String getDisplayName();
+    /**
+     * Returns the name of the user
+     * */
+    String getDisplayName();
 }

@@ -7,6 +7,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+/**
+ * Client object for the server. Contains purpose is to contain all client information.
+ * */
 public class Client {
     private Socket socket = null;
     private User user = null;
@@ -65,14 +68,24 @@ public class Client {
         return this.dos;
     }
 
+    /**
+     * Sets the last communication to client, to now.
+     * */
     public void updateTime(){
         lastcommunication = java.lang.System.currentTimeMillis();
     }
 
+    /**
+     * @return when the last communication with client happened.
+     * */
     public long getTime(){
         return this.lastcommunication;
     }
 
+
+    /**
+     * Close a connection for a client.
+     * */
     public void close(){
         try {
             dos = null;
@@ -84,13 +97,20 @@ public class Client {
         finally {
             socket = null;
             user = null;
+            setConnected(false);
         }
     }
 
+    /**
+     * @return if a client is connected or not.
+     * */
     public boolean isConnected() {
         return connected;
     }
 
+    /**
+     * @param connected sets if the client is connected or not.
+     * */
     public void setConnected(boolean connected) {
         this.connected = connected;
     }

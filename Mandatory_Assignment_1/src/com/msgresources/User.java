@@ -1,5 +1,8 @@
 package com.msgresources;
 
+/**
+ * Default class for users
+ * */
 public class User implements UserInterface {
 
     String username = null;

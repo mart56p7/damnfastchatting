@@ -3,14 +3,17 @@ package com.msgresources;
 import java.util.ArrayList;
 import java.util.List;
 
-// FIFO (First In First Out) Queue
-// This queue is thread safe
+/**
+ * FIFO (First In First Out) Queue
+ * This FIFO queue is thread safe
+ */
 public class FIFO <E> implements StackInterface <E>{
    private volatile LinkedChildElement first = null;
    private volatile LinkedChildElement last = null;
    private volatile List<FIFOObserver> observers = new ArrayList<FIFOObserver>();
 
 
+   @Override
    @SuppressWarnings("unchecked")
    public void push(E e){
       synchronized (this) {
@@ -27,7 +30,8 @@ public class FIFO <E> implements StackInterface <E>{
          }
       }
    }
-   
+
+   @Override
    @SuppressWarnings("unchecked")
    public E pop(){
       synchronized (this) {
@@ -39,7 +43,8 @@ public class FIFO <E> implements StackInterface <E>{
          return (E) tmpfirst;
       }
    }
-   
+
+   @Override
    @SuppressWarnings("unchecked")
    public E peek(){
       synchronized (this) {
@@ -49,7 +54,8 @@ public class FIFO <E> implements StackInterface <E>{
          return (E) this.first.get(0);
       }
    }
-   
+
+   @Override
    public int size(){
       synchronized (this) {
          if (first == null) {
@@ -58,11 +64,15 @@ public class FIFO <E> implements StackInterface <E>{
          return this.first.count();
       }
    }
-   
+
+   @Override
    public void grow(){
       //Does nothing
    }
 
+   /**
+    * @param i gets the i'th element in the queue
+    * */
    public E get(int i) {
       synchronized (this) {
          if (first == null || i < 0) {
@@ -72,12 +82,18 @@ public class FIFO <E> implements StackInterface <E>{
       }
    }
 
+   /**
+    * @param observer add the observer to the FIFO queue, when new messages are pushed onto an empty queue, observers are notified.
+    * */
    public void attach(FIFOObserver observer){
       synchronized (observer) {
          observers.add(observer);
       }
    }
 
+   /**
+    * @param observer remove the given observer
+    * */
    public void deattach(FIFOObserver observer){
       synchronized (observer) {
          observers.remove(observer);

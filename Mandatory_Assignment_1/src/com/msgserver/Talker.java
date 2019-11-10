@@ -6,6 +6,9 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * The talker is used for communicating with the clients.
+ * */
 public class Talker implements Runnable, FIFOObserver {
 
     private volatile List<Client> clients = null;
@@ -15,12 +18,19 @@ public class Talker implements Runnable, FIFOObserver {
     private boolean shutdown = false;
     private Thread me = null;
 
+    /**
+     * @param clients reference to the list of clients
+     * @param msgqueue reference to the list of messages
+     * */
     public Talker(List<Client> clients, FIFO<Message> msgqueue){
         this.clients = clients;
         this.msgqueue = msgqueue;
         msgqueue.attach(this);
     }
 
+    /**
+     * Listen for new messages from the clients.
+     * */
     @Override
     public void run() {
         me = Thread.currentThread();
@@ -52,12 +62,19 @@ public class Talker implements Runnable, FIFOObserver {
         shutdown = true;
     }
 
+    /**
+     * Callback function used by the FIFO queue, when a empty FIFO queue is populated by an item.
+     * */
     @Override
     public void FIFONotEmpty() {
         synchronized (me) {
             me.notify();
         }
     }
+
+    /*
+     * Message type and handle: START
+     * */
 
     public void sendMessage(Client client, Message msg) {
         try {
@@ -97,4 +114,7 @@ public class Talker implements Runnable, FIFOObserver {
         }
 
     }
+    /*
+     * Message type and handle: END
+     * */
 }

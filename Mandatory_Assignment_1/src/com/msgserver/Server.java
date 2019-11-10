@@ -4,6 +4,9 @@ import java.net.*;
 import java.io.*;
 import java.util.List;
 
+/**
+ * The server class listen for new TCP connection requests. When a connection request is meet a new client is created and Application Layer traffic is started.
+ * */
 public class Server
 {
     private volatile ServerSocket server = null;

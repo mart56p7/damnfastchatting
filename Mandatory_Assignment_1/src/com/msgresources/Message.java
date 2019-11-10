@@ -1,5 +1,8 @@
 package com.msgresources;
 
+/**
+ * Message objects are used for communication (either input or output from the socket).
+ * */
 public class Message {
     private String message = null;
     private User user = null;
@@ -30,6 +33,10 @@ public class Message {
         return this.user;
     }
 
+    /**
+    * @param msg the message to be formated
+    * @return a String that is the data from the mesage. If no user is specified in the message, the return value is the same as getMessage()
+    * */
     public static String Format(Message msg){
         if(msg.getUser() == null){
             return msg.getMessage();
