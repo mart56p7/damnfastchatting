@@ -16,6 +16,7 @@ import java.util.List;
 /**
  * Simple client using Swing
  * Implementation of a mediator between GUI and business logic
+ * All GUI components are incapsulated in this class, using composition.
  * */
 public class ClientGUISwing implements ClientGUISwingInterface {
     private boolean shutdown = false;
@@ -39,7 +40,7 @@ public class ClientGUISwing implements ClientGUISwingInterface {
     public ClientGUISwing(){
         inputqueue = new ArrayList<>();
         //Easy testing
-        inputqueue.add("JOIN ImAwesome, 127.0.0.1:5000");
+        inputqueue.add("JOIN MyNameIs, 127.0.0.1:5000");
         inputposition++;
 
         frame = new JFrame("Damn Fast Messaging");

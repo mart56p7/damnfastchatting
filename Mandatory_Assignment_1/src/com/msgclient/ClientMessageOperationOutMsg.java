@@ -9,18 +9,26 @@ import java.util.regex.Pattern;
 public class ClientMessageOperationOutMsg extends ClientMessageOperation {
     private static final Pattern msg_pattern = Pattern.compile("\\ADATA ([a-zA-Z_0-9-]{1,12}):((.){1,255})\\Z");
 
+    /**
+     * @param client The client data
+     * @param cgui Mediator to GUI components
+     * */
     public ClientMessageOperationOutMsg(Client client, ClientGUISwingInterface cgui){
         super(client, cgui);
     }
 
+    /**
+     * @param msg The Message that is being checked if its a Message message
+     * @return is the msg is a Message message returns true, else returns false
+     * */
     @Override
     public boolean command(Message msg) throws MessageProtocolException {
         Matcher msg_matcher = msg_pattern.matcher(msg.getMessage());
-        System.out.println("1: " + msg.getMessage());
+        //If the message matches our regex
         if(msg_matcher.find()){
-            System.out.println("2");
+            //If we are connected to a server
             if(client.isConnected()){
-                System.out.println("3");
+                //Send the message
                 client.sendMessage(msg.getMessage());
             }
             return true;

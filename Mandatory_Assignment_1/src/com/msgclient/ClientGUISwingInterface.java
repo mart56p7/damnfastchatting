@@ -5,7 +5,9 @@ import com.msgresources.UserInterface;
 import java.util.List;
 
 
-//Mediator
+/**
+ * Interface to our Mediator between GUI and logic
+ * */
 public interface ClientGUISwingInterface {
     /**
      * Called to display text in the GUI Client

@@ -116,6 +116,8 @@ public class Client {
         }
     }
 
+    //One could easily argue that this method should be in ClientNetwork instead of here. It is here because of ease of access.
+    // But it also means that we have active network methods in the object, instead of it just being a data container.
     public void sendMessage(String msg) throws MessageProtocolException {
         if(isConnected()){
             try {
@@ -127,6 +129,8 @@ public class Client {
         }
     }
 
+    //One could easily argue that this method should be in ClientNetwork instead of here. It is here because of ease of access.
+    // But it also means that we have active network methods in the object, instead of it just being a data container.
     public String getMessage() {
         if (getSocket() != null && getDataInputStream() != null) {
             try {
