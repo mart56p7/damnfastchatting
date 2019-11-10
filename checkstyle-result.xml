@@ -34,8 +34,6 @@
 
     - some best practices
 
-  Checkstyle is very configurable. Be sure to read the documentation at
-  http://checkstyle.sf.net (or in your downloaded distribution).
 
   Most Checks are configurable, be sure to consult the documentation.
 
