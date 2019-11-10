@@ -3,6 +3,7 @@ package com.msgserver;
 import com.msgresources.*;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,25 +38,30 @@ public class Listener implements Runnable {
             //System.out.println("Running" + clients.size());
             long start = System.currentTimeMillis();
             synchronized (clients){
-                for(Client client: clients){
-                    try {
-                        //System.out.println("Messages in Listener " + client.getDataInputStream().available());
-                        if(client != null && client.getDataInputStream().available() > 0){
-                            System.out.println("Data available");
-                            System.out.println("Reading data");
-                            String msg = client.getDataInputStream().readUTF();
+                if(clients.size() > 0)
+                {
+                    for(int i = 0; i < clients.size(); i++){
+                        //If the message from the client is quit, next client int he line will get its moved to next cycle through!
+                        Client client = clients.get(i);
+                        try {
+                            //System.out.println("Messages in Listener " + client.getDataInputStream().available());
+                            if(client != null && client.getSocket() != null && client.getDataInputStream().available() > 0){
+                                System.out.println("Data available");
+                                System.out.println("Reading data");
+                                String msg = client.getDataInputStream().readUTF();
 
-                            System.out.println("Done reading data");
-                            //Look at message data
-                            try {
-                                System.out.println("Calling messagee controller with " + msg);
-                                msgcontroller(client, msg);
-                            } catch (MessageProtocolException e) {
-                                System.out.println("Message failed with the error " + e.getMessage());
+                                System.out.println("Done reading data");
+                                //Look at message data
+                                try {
+                                    System.out.println("Calling messagee controller with " + msg);
+                                    msgcontroller(client, msg);
+                                } catch (MessageProtocolException e) {
+                                    System.out.println("Message failed with the error " + e.getMessage());
+                                }
                             }
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
                 }
             }
@@ -96,22 +102,25 @@ public class Listener implements Runnable {
             //Remove client and update client list for all
             System.out.println("\bbefore Removed client " + clients.size());
             synchronized (clients){
-                clients.remove(client);
                 client.close();
-            }
-            for(int i = 0; i < clients.size(); i++){
-                if(clients.get(i).getUser() != null && clients.get(i).getUser().getDisplayName() != null){
-                    System.out.println(clients + " " + clients.get(i).getUser().getDisplayName());
+                clients.remove(client);
+                for(int i = 0; i < clients.size(); i++){
+                    if(clients.get(i).getUser() != null && clients.get(i).getUser().getDisplayName() != null){
+                        System.out.println(clients + " " + clients.get(i).getUser().getDisplayName());
+                    }
+                    else if(clients.get(i).getUser() != null){
+                        System.out.println(clients + " " + clients.get(i).getUser());
+                    }else{
+                        System.out.println(clients);
+                    }
                 }
-                else if(clients.get(i).getUser() != null){
-                    System.out.println(clients + " " + clients.get(i).getUser());
-                }else{
-                    System.out.println(clients);
+                System.out.println("\bafter Removed client " + clients.size());
+                //Sends user list to all users.
+
+                if (clients.size() > 0) {
+                    talker.LIST();
                 }
             }
-            System.out.println("\bafter Removed client " + clients.size());
-            //Sends user list to all users.
-            talker.LIST();
         }
         else if(matcher_msg.find()){
             System.out.println("new msg");

@@ -9,10 +9,11 @@ public class StartClient {
 
         //Setting up application layer in network
         Client client = new Client();
-        ClientMessageOperation[] cmo = new ClientMessageOperation[3];
+        ClientMessageOperation[] cmo = new ClientMessageOperation[4];
         cmo[0] = new ClientMessageOperationOutJoin(client, cgui);
         cmo[1] = new ClientMessageOperationOutMsg(client, cgui);
         cmo[2] = new ClientMessageOperationOutHelp(client, cgui);
+        cmo[3] = new ClientMessageOperationOutQuit(client, cgui);
         ClientMessageController cmoc = new ClientMessageController(cmo);
 
         ClientMessageOperation[] cmi = new ClientMessageOperation[4];
