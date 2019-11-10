@@ -20,7 +20,7 @@ import java.util.List;
 public class ClientGUISwing implements ClientGUISwingInterface {
     private boolean shutdown = false;
     private ClientNetworkInterface clientobj = null;
-
+    //Composition
     private JFrame frame = null;
     private JPanel panel = null;
     private UserTableSwing ut = null;
