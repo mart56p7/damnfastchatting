@@ -62,7 +62,7 @@ public class Listener implements Runnable {
             long end = System.currentTimeMillis();
             try {
                 //System.out.println("Sleeping" + Math.min(waittime - (end - start), 0));
-                wait(Math.max(waittime - (end - start), 0));
+                Thread.sleep(Math.max(waittime - (end - start), 0));
                 //System.out.println("Im awake");
             } catch (InterruptedException e) {
                 e.printStackTrace();
