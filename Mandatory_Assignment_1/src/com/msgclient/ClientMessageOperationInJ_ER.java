@@ -30,7 +30,10 @@ public class ClientMessageOperationInJ_ER extends ClientMessageOperation {
         Matcher error_matcher = error_pattern.matcher(msg.getMessage());
 
         if (error_matcher.find()) {
-            cgui.receivedMessage("System", "Server responded with Error code: " + error_matcher.group(1) + ", Message: " + error_matcher.group(2), true);
+            cgui.error("Server responded with Error code: " + error_matcher.group(1) + ", Message: " + error_matcher.group(2));
+            if(error_matcher.group(1).equals(450)){
+                cgui.updateUserList(null);
+            }
             return true;
         }
         return false;

@@ -47,9 +47,12 @@ public class Client {
                 dis = new DataInputStream(socket.getInputStream());
                 updateTime();
                 setConnected(true);
+                startHeart();
             } catch (IOException e) {
                 this.socket = null;
                 System.out.println("Failed to connect client: " + e.getMessage());
+                e.printStackTrace();
+            } catch (MessageProtocolException e) {
                 e.printStackTrace();
             }
         }
@@ -151,6 +154,9 @@ public class Client {
         connected = false;
         username = null;
         socket = null;
+        if(heartThread != null){
+            heartThread.interrupt();
+        }
         heart = null;
         heartThread = null;
         dis = null;

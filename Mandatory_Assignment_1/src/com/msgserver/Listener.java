@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 public class Listener implements Runnable {
     private volatile List<Client> clients;
     private volatile FIFO<Message> msgqueue;
-    private final int waittime = 100;
+    private final int waittime = 30;
     private boolean running = true;
     private Talker talker;
     private Thread me = null;

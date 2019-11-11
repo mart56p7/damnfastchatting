@@ -38,7 +38,9 @@ public class Disconnector implements Runnable {
                 try {
                     synchronized (this.clients){
                         for (Client client : clients) {
+
                             long timeElapsed = System.currentTimeMillis() - client.getTime();
+                            //System.out.println("Checking if anyone needs to be disconnected " + timeElapsed);
                             nextchecktime = Math.min(nextchecktime, defaultchecktime - timeElapsed);
                             if (timeElapsed >= defaultchecktime) {
                                 disconnect(client);
@@ -71,11 +73,18 @@ public class Disconnector implements Runnable {
      * */
     private void disconnect(Client client){
         synchronized (clients){
-            talker.sendMessage(client, new Message("You have been disconnected from the server"));
-            clients.remove(client);
-            client.close();
-            talker.LIST();
-            notify();
+            try {
+                talker.sendMessage(client, new Message("J_ER 450:You have been disconnected from the server"));
+            }
+            catch(Exception e){
+                System.out.println("Failed to send disconnect to client");
+            }
+            finally {
+                clients.remove(client);
+                client.close();
+                talker.LIST();
+                notify();
+            }
         }
     }
 }
